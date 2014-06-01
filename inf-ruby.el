@@ -520,9 +520,11 @@ Returns the selected completion or nil."
 Uses the first one available of Pry, Bond and the default IRB
 completion."
   (interactive)
-  (let ((replacement (inf-ruby-completion-at-point)))
-    (when replacement
-      (inf-ruby-complete-replace-expr replacement))))
+  (when (comint-after-pmark-p)
+    (let* ((bounds (inf-ruby-completion-bounds-of-expr-at-point))
+           (expr (buffer-substring (car bounds) (cdr bounds)))
+           (completions (inf-ruby-completions expr)))
+      (completion-in-region (car bounds) (cdr bounds) completions))))
 
 (defun inf-ruby-complete-replace-expr (str)
   "Replace expression at point with STR."
