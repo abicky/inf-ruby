@@ -627,8 +627,11 @@ automatically."
 (defun inf-ruby-console-rails (dir)
   "Run Rails console in DIR."
   (interactive "D")
-  (let ((default-directory (file-name-as-directory dir)))
-    (run-ruby "rails console" "rails")))
+  (let* ((default-directory (file-name-as-directory dir))
+         (command-prefix (if (file-exists-p "Gemfile") "bundle exec " ""))
+         ;; /path/to/app/ => app
+         (app-name (file-name-nondirectory (substring default-directory 0 -1))))
+    (run-ruby (concat command-prefix "rails console") (concat "rails " app-name))))
 
 ;;;###autoload
 (defun inf-ruby-console-gem (dir)
